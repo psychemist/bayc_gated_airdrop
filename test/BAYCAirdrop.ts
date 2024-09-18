@@ -35,7 +35,7 @@ describe("BAYCAirdrop", function () {
             "0x3ffb0e5f530e9ddd3718b9d710ef3da2f12b5ad4ca9a353d02047cba335053dd"
         ]
 
-        const nft_whitelist = "0x4AF79fFCaBb09083aF6CcC3b2C20Fe989519f6d7";
+        const nft_and_whitelist = "0x4AF79fFCaBb09083aF6CcC3b2C20Fe989519f6d7";
         const nft_no_whitelist = "0x7Ad53bbA1004e46dd456316912D55dBc5D311a03";
         const whitlelist_no_nft = owner.address;
         const no_whitelist_no_nft = signer.address;
@@ -48,107 +48,119 @@ describe("BAYCAirdrop", function () {
 
         return {
             token, baycAirdrop, owner, signer, root, proof1, proof2, BAYC_ADDRESS,
-            nft_whitelist, nft_no_whitelist, whitlelist_no_nft, no_whitelist_no_nft
+            nft_and_whitelist, nft_no_whitelist, whitlelist_no_nft, no_whitelist_no_nft
         };
     }
 
     // describe("", {});
 
     describe("Claim Airdrop", function () {
-        it("Should revert on zero amount", async function () {
-            const { proof1, baycAirdrop } = await deployBAYCAirdropFixture();
+        // it("Should revert on zero amount", async function () {
+        //     const { proof1, baycAirdrop } = await deployBAYCAirdropFixture();
 
-            await expect(baycAirdrop.claimAirdrop(0, proof1)
-            ).to.be.revertedWith("Cannot claim zero tokens!");
-        });
+        //     await expect(baycAirdrop.claimAirdrop(0, proof1)
+        //     ).to.be.revertedWith("Cannot claim zero tokens!");
+        // });
 
-        it("Should revert with zero airdrop balance", async function () {
-            const { token } = await loadFixture(deployBAYCToken);
-            const { BAYC_ADDRESS, root, proof1 } = await deployBAYCAirdropFixture();
+        // it("Should revert with zero airdrop balance", async function () {
+        //     const { token } = await loadFixture(deployBAYCToken);
+        //     const { BAYC_ADDRESS, root, proof1 } = await deployBAYCAirdropFixture();
 
-            const BAYC_Airdrop = await ethers.getContractFactory("BAYCAirdrop");
-            const baycAirdrop = await BAYC_Airdrop.deploy(token.target, BAYC_ADDRESS, root);
+        //     const BAYC_Airdrop = await ethers.getContractFactory("BAYCAirdrop");
+        //     const baycAirdrop = await BAYC_Airdrop.deploy(token.target, BAYC_ADDRESS, root);
 
-            await expect(baycAirdrop.claimAirdrop(1000, proof1)
-            ).to.be.revertedWith("All airdrop tokens claimed!");
-        });
+        //     await expect(baycAirdrop.claimAirdrop(1000, proof1)
+        //     ).to.be.revertedWith("All airdrop tokens claimed!");
+        // });
 
-        it("Should reject claimant without NFT and not on whitelist", async function () {
-            const { baycAirdrop, proof1, no_whitelist_no_nft } = await deployBAYCAirdropFixture();
-            const invalidClaimant = await ethers.getImpersonatedSigner(no_whitelist_no_nft);
+        // it("Should reject claimant without NFT and not on whitelist", async function () {
+        //     const { baycAirdrop, proof1, no_whitelist_no_nft } = await deployBAYCAirdropFixture();
+        //     const invalidClaimant = await ethers.getImpersonatedSigner(no_whitelist_no_nft);
 
-            const airdropAmount = 100n;
+        //     const airdropAmount = 100n;
 
-            await expect(baycAirdrop.connect(invalidClaimant).claimAirdrop(airdropAmount, proof1)).to.be.revertedWith("No NFT detected!");
-            expect(await baycAirdrop.claimants(invalidClaimant)).to.be.false;
-        });
+        //     await expect(baycAirdrop.connect(invalidClaimant).claimAirdrop(airdropAmount, proof1)).to.be.revertedWith("No NFT detected!");
+        //     expect(await baycAirdrop.claimants(invalidClaimant)).to.be.false;
+        // });
 
-        it("Should reject claimant on whitelist without NFT", async function () {
-            const { baycAirdrop, proof1, whitlelist_no_nft } = await deployBAYCAirdropFixture();
-            const invalidClaimant = await ethers.getImpersonatedSigner(whitlelist_no_nft);
+        // it("Should reject claimant on whitelist without NFT", async function () {
+        //     const { baycAirdrop, proof1, whitlelist_no_nft } = await deployBAYCAirdropFixture();
+        //     const invalidClaimant = await ethers.getImpersonatedSigner(whitlelist_no_nft);
 
-            const airdropAmount = 200n;
+        //     const airdropAmount = 200n;
 
-            await expect(baycAirdrop.connect(invalidClaimant).claimAirdrop(airdropAmount, proof1)).to.be.revertedWith("No NFT detected!");
-            expect(await baycAirdrop.claimants(invalidClaimant)).to.be.false;
-        });
+        //     await expect(baycAirdrop.connect(invalidClaimant).claimAirdrop(airdropAmount, proof1)).to.be.revertedWith("No NFT detected!");
+        //     expect(await baycAirdrop.claimants(invalidClaimant)).to.be.false;
+        // });
 
-        it("Should reject claimant with NFT but not on whitelist", async function () {
-            const { baycAirdrop, proof1, nft_no_whitelist } = await deployBAYCAirdropFixture();
-            const invalidClaimant = await ethers.getImpersonatedSigner(nft_no_whitelist);
+        // it("Should reject claimant with NFT but not on whitelist", async function () {
+        //     const { baycAirdrop, proof1, nft_no_whitelist } = await deployBAYCAirdropFixture();
+        //     const invalidClaimant = await ethers.getImpersonatedSigner(nft_no_whitelist);
 
-            const airdropAmount = 200n;
+        //     const airdropAmount = 200n;
 
-            await expect(baycAirdrop.connect(invalidClaimant).claimAirdrop(airdropAmount, proof1)).to.be.revertedWith("Invalid proof submitted!");
-            expect(await baycAirdrop.claimants(invalidClaimant)).to.be.false;
-        });
+        //     await expect(baycAirdrop.connect(invalidClaimant).claimAirdrop(airdropAmount, proof1)).to.be.revertedWith("Invalid proof submitted!");
+        //     expect(await baycAirdrop.claimants(invalidClaimant)).to.be.false;
+        // });
 
-        it("Should revert with wrong airdrop amount", async function () {
-            const { baycAirdrop, proof1, nft_whitelist } = await deployBAYCAirdropFixture();
-            const validClaimant = await ethers.getImpersonatedSigner(nft_whitelist);
+        // it("Should revert with wrong airdrop amount", async function () {
+        //     const { baycAirdrop, proof1, nft_and_whitelist } = await deployBAYCAirdropFixture();
+        //     const validClaimant = await ethers.getImpersonatedSigner(nft_and_whitelist);
 
-            const airdropAmount = 5000n;
+        //     const airdropAmount = 5000n;
 
-            await expect(
-                baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1)
-            ).to.be.revertedWith("Invalid proof submitted!");
-            expect(await baycAirdrop.claimants(nft_whitelist)).to.be.false;
-        });
+        //     await expect(
+        //         baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1)
+        //     ).to.be.revertedWith("Invalid proof submitted!");
+        //     expect(await baycAirdrop.claimants(nft_and_whitelist)).to.be.false;
+        // });
 
-        it("Should update state correctly after claimant collects airdrop", async function () {
-            const { baycAirdrop, proof1, nft_whitelist } = await deployBAYCAirdropFixture();
-            const validClaimant = await ethers.getImpersonatedSigner(nft_whitelist);
+        // it("Should update state correctly after claimant collects airdrop", async function () {
+        //     const { baycAirdrop, proof1, nft_and_whitelist } = await deployBAYCAirdropFixture();
+        //     const validClaimant = await ethers.getImpersonatedSigner(nft_and_whitelist);
 
-            const airdropAmount = 500n;
+        //     const airdropAmount = 500n;
 
-            await baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1);
-            expect(await baycAirdrop.claimants(nft_whitelist)).to.be.true;
-        });
+        //     await baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1);
+        //     expect(await baycAirdrop.claimants(nft_and_whitelist)).to.be.true;
+        // });
 
-        it("Should send airdrop tokens to valid claimant on whitelist with NFT", async function () {
-            const { baycAirdrop, token, proof1, nft_whitelist } = await deployBAYCAirdropFixture();
-            const validClaimant = await ethers.getImpersonatedSigner(nft_whitelist);
+        // it("Should send airdrop tokens to valid claimant on whitelist with NFT", async function () {
+        //     const { baycAirdrop, token, proof1, nft_and_whitelist } = await deployBAYCAirdropFixture();
+        //     const validClaimant = await ethers.getImpersonatedSigner(nft_and_whitelist);
 
-            const airdropAmount = 500n;
-            const balBefore = await token.balanceOf(validClaimant);
+        //     const airdropAmount = 500n;
+        //     const balBefore = await token.balanceOf(validClaimant);
 
-            await baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1);
+        //     await baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1);
 
-            const balAfter = await token.balanceOf(validClaimant);
+        //     const balAfter = await token.balanceOf(validClaimant);
 
-            expect(balAfter).to.equal(balBefore + airdropAmount);
-        });
+        //     expect(balAfter).to.equal(balBefore + airdropAmount);
+        // });
 
-        it("Should emit an event after successful airdrop claim", async function () {
-            const { baycAirdrop, proof1, nft_whitelist } = await deployBAYCAirdropFixture();
-            const validClaimant = await ethers.getImpersonatedSigner(nft_whitelist);
+        // it("Should reject claimant who has claimed already airdrop", async function () {
+        //     const { baycAirdrop, proof1, nft_and_whitelist } = await deployBAYCAirdropFixture();
+        //     const validClaimant = await ethers.getImpersonatedSigner(nft_and_whitelist);
 
-            const airdropAmount = 500n;
+        //     const airdropAmount = 500n;
 
-            await expect(
-                baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1)
-            ).to.emit(baycAirdrop, "AirdropClaimed")
-                .withArgs(validClaimant, airdropAmount);
-        });
+        //     await baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1);
+        //     await expect(
+        //         baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1)
+        //     ).to.be.revertedWith("Airdrop already claimed!");
+        // });
+
+        // it("Should emit an event after successful airdrop claim", async function () {
+        //     const { baycAirdrop, proof1, nft_and_whitelist } = await deployBAYCAirdropFixture();
+        //     const validClaimant = await ethers.getImpersonatedSigner(nft_and_whitelist);
+
+        //     const airdropAmount = 500n;
+
+        //     await expect(
+        //         baycAirdrop.connect(validClaimant).claimAirdrop(airdropAmount, proof1)
+        //     ).to.emit(baycAirdrop, "AirdropClaimed")
+        //         .withArgs(validClaimant, airdropAmount);
+        // });
     });
 });

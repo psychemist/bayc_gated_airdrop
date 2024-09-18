@@ -1,9 +1,8 @@
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 import csv from "csv-parser";
 import fs from "fs";
+import { constants } from "fs/promises";
 import keccak256 from "keccak256";
-import { Merkletree } from "merkletreejs";
-import SHA256 from "crypto-js/sha256";
-import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 
 const filePath = "./addresses.csv";
 const leaves = [];
@@ -18,7 +17,6 @@ fs.createReadStream(filePath)
     .on("end", () => {
         try {
             // Build Merkle tree whose leaves are hashed userData
-            // leaves.map(leaf = );
             const tree = StandardMerkleTree.of(leaves, ["address", "uint256"]);
             // JSONify Merkle tree and write to file
             fs.writeFileSync("tree.json", JSON.stringify(tree.dump()));
@@ -26,7 +24,6 @@ fs.createReadStream(filePath)
 
             // Read stored Merkle tree from file
             const merkleTree = StandardMerkleTree.load(JSON.parse(fs.readFileSync("tree.json", "utf8")))
-            console.log("Merkle Root:", merkleTree.root);
             const proofs = {};
 
             // Loop through tree entries (index, userData[])
@@ -49,4 +46,4 @@ fs.createReadStream(filePath)
     })
 
 
-  // Merkle Root: 0x2901c586b45328dd13a5607de2890825bd4510e10653eaac223f8507ec6766c4
+  // Merkle Root: 0xb782fedbf9cc21327534710499e36bf53610d7949297edd9a1bec223564500bb

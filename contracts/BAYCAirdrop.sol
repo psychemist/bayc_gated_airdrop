@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -7,17 +7,13 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract BAYCAirdrop is Ownable {
-    IERC20 token;
-    IERC721 nft;
-    bytes32 merkleRoot;
+    IERC20 public token;
+    IERC721 public nft;
+    bytes32 public merkleRoot;
 
-    mapping(address => bool) claimants;
+    mapping(address => bool) public claimants;
 
-    event AirdropClaimed(
-        address indexed claimant,
-        uint256 amount,
-        uint32 timestamp
-    );
+    event AirdropClaimed(address indexed claimant, uint256 amount);
 
     constructor(
         address _tokenAddress,
@@ -29,11 +25,7 @@ contract BAYCAirdrop is Ownable {
         merkleRoot = _merkleRoot;
     }
 
-    function claimAirdrop(
-        address msg.sender,
-        uint256 _amount,
-        bytes32[] memory _proof
-    ) external {
+    function claimAirdrop(uint256 _amount, bytes32[] memory _proof) external {
         require(msg.sender != address(0), "Address Zero forbidden!");
         require(!claimants[msg.sender], "Airdrop already claimed!");
 
@@ -44,7 +36,7 @@ contract BAYCAirdrop is Ownable {
         );
 
         // Check that owner has BAYC NFT
-        require(nft.balanceOf(msg.sender) > 0);
+        require(nft.balanceOf(msg.sender) > 0, "No NFT detected!");
 
         // Compute leaf hash for the provided address and amount ABI encoded values
         bytes32 leaf = keccak256(
@@ -53,7 +45,7 @@ contract BAYCAirdrop is Ownable {
         // Verify leaf hash using MerkleProof's verify function.
         require(
             MerkleProof.verify(_proof, merkleRoot, leaf),
-            "Invalid proof submmitted"
+            "Invalid proof submitted!"
         );
 
         // Mark claimant has received tokens
@@ -62,18 +54,22 @@ contract BAYCAirdrop is Ownable {
         // Transfer airdrop tokens to claimant
         token.transfer(msg.sender, _amount);
 
-        emit AirdropClaimed(msg.sender, _amount, block.timestamp);
+        emit AirdropClaimed(msg.sender, _amount);
     }
 
+    // Update merkleroot variable with new proof for update whitelist
     function updateMerkleRoot(bytes32 _newMerkleRoot) external onlyOwner {
-        require(token.balanceOf(address(this)), "Airdrop tokens exhausted!");
+        require(
+            token.balanceOf(address(this)) > 0,
+            "Airdrop tokens exhausted!"
+        );
         merkleRoot = _newMerkleRoot;
     }
 
+    // Withdraw all airdrop tokens to contract owner's address
     function withdraw() external onlyOwner {
-        // Withdraw all airdrop tokens to contract owner's address
         require(
-            token.transfer(_owner, token.balanceOf(address(this))),
+            token.transfer(owner(), token.balanceOf(address(this))),
             "Transfer failed"
         );
     }

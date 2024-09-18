@@ -18,6 +18,9 @@
         "@openzeppelin/contracts": "^5.0.2",
         "@openzeppelin/merkle-tree": "^1.0.7",
         "cryptojs": "^2.5.3",
+        "csv-parser": "^3.0.0",
+        "fs": "^0.0.1-security",
+        "keccak256": "^1.0.6",
         "merkletreejs": "^0.4.0"
     }
 }

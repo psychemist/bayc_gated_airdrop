@@ -59,18 +59,27 @@ contract BAYCAirdrop is Ownable {
 
     // Update merkleroot variable with new proof for update whitelist
     function updateMerkleRoot(bytes32 _newMerkleRoot) external onlyOwner {
+        _zeroAddressCheck();
+
         require(
             token.balanceOf(address(this)) > 0,
             "Airdrop tokens exhausted!"
         );
+        require(merkleRoot != _newMerkleRoot, "New merkle root invalid");
+
         merkleRoot = _newMerkleRoot;
     }
 
     // Withdraw all airdrop tokens to contract owner's address
     function withdraw() external onlyOwner {
+        _zeroAddressCheck();
         require(
             token.transfer(owner(), token.balanceOf(address(this))),
-            "Transfer failed"
+            "Transfer failed!"
         );
+    }
+
+    function _zeroAddressCheck() private view {
+        require(msg.sender != address(0), "Address Zero forbidden!");
     }
 }

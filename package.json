@@ -1,5 +1,4 @@
 {
-    "type": "module",
     "name": "bayc_airdrop",
     "version": "1.0.0",
     "main": "index.js",
@@ -19,6 +18,7 @@
         "@openzeppelin/merkle-tree": "^1.0.7",
         "cryptojs": "^2.5.3",
         "csv-parser": "^3.0.0",
+        "dotenv": "^16.4.5",
         "fs": "^0.0.1-security",
         "keccak256": "^1.0.6",
         "merkletreejs": "^0.4.0"
